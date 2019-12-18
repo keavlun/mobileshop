@@ -1,7 +1,6 @@
 module.exports = {
   configureWebpack:{
-    reslove:{
-      extensions: [],
+    resolve:{
       alias:{
         'assets': '@/assets',
         'common': '@/common',
