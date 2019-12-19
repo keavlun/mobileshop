@@ -32,7 +32,8 @@ export default {
 .recommend{
   text-align: center;
   padding: 10px 0 30px;
-  border-bottom: 8px solid #eee
+  border-bottom: 8px solid #eee;
+  font-size: 14px;
 }
 .recommend ul {
   display: flex;
@@ -45,5 +46,6 @@ export default {
 .recommend ul li img {
   width: 70px;
   height: 70px;
+  margin-bottom: 5px;
 }
 </style>
