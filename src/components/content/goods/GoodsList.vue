@@ -1,6 +1,5 @@
 <template>
   <div class="goods">
-    <!-- {{goods}} -->
   <goods-list-item 
   v-for="(item, index) in goods" 
   :key="index" 

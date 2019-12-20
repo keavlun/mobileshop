@@ -6,11 +6,9 @@
     <home-swiper :banners="banners" />
     <recommend-view :recommends="recommends" />
     <future-view />
-    <tab-control :titles="['流行','新款','精选']" class="tab-bar" />
-    <goods-list :goods="goods['pop'].list"/>
+    <tab-control :titles="['流行','新款','精选']" class="tab-bar" @tabClick="tabClick" />
+    <goods-list :goods="togglelist" />
 
-
-    
     <ul>
       <li>1</li>
       <li>2</li>
@@ -82,7 +80,7 @@ import HomeSwiper from "./childComps/HomeSwiper";
 import RecommendView from "./childComps/RecommendView";
 import FutureView from "./childComps/FutureView";
 import TabControl from "../../components/content/tabControl/TabControl";
-import GoodsList from '../../components/content/goods/GoodsList'
+import GoodsList from "../../components/content/goods/GoodsList";
 
 import { getHomeMultidata, getHomeGoods } from "../../network/home";
 
@@ -95,7 +93,8 @@ export default {
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] }
-      }
+      },
+      goodstype: "pop"
     };
   },
   created() {
@@ -117,6 +116,20 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
       });
+    },
+    tabClick(index) {
+      console.log(index);
+      switch (index) {
+        case 0:
+          this.goodstype = "pop";
+          break;
+        case 1:
+          this.goodstype = "new";
+          break;
+        case 2:
+          this.goodstype = "sell";
+          break;
+      }
     }
   },
   components: {
@@ -126,6 +139,11 @@ export default {
     FutureView,
     TabControl,
     GoodsList
+  },
+  computed:{
+    togglelist(){
+      return this.goods[this.goodstype].list
+    }
   }
 };
 </script>
