@@ -3,74 +3,14 @@
     <nav-bar class="home-navbar">
       <div slot="center">购物街</div>
     </nav-bar>
-    <home-swiper :banners="banners" />
-    <recommend-view :recommends="recommends" />
-    <future-view />
-    <tab-control :titles="['流行','新款','精选']" class="tab-bar" @tabClick="tabClick" />
-    <goods-list :goods="togglelist" />
-
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-    </ul>
+    <scroll class="content" ref="scroll" :probe-type="3">
+      <home-swiper :banners="banners" />
+      <recommend-view :recommends="recommends" />
+      <future-view />
+      <tab-control :titles="['流行','新款','精选']" class="tab-bar" @tabClick="tabClick" />
+      <goods-list :goods="togglelist" />
+    </scroll>
+    <back-top @click.native="backClick"></back-top>
   </div>
 </template>
 
@@ -81,6 +21,8 @@ import RecommendView from "./childComps/RecommendView";
 import FutureView from "./childComps/FutureView";
 import TabControl from "../../components/content/tabControl/TabControl";
 import GoodsList from "../../components/content/goods/GoodsList";
+import Scroll from "../../components/common/scroll/Scroll";
+import BackTop from '../../components/common/backtop/BackTop';
 
 import { getHomeMultidata, getHomeGoods } from "../../network/home";
 
@@ -130,6 +72,9 @@ export default {
           this.goodstype = "sell";
           break;
       }
+    },
+    backClick(){
+      this.$refs.scroll.scrollTo(0,0);
     }
   },
   components: {
@@ -138,19 +83,22 @@ export default {
     RecommendView,
     FutureView,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll,
+    BackTop
   },
-  computed:{
-    togglelist(){
-      return this.goods[this.goodstype].list
+  computed: {
+    togglelist() {
+      return this.goods[this.goodstype].list;
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 #home {
-  padding-top: 44px;
+  /* padding-top: 44px; */
+  height: 100vh;
 }
 .home-navbar {
   position: fixed;
@@ -165,5 +113,10 @@ export default {
 .tab-bar {
   position: sticky;
   top: 44px;
+}
+.content{
+  height: calc(100% - 93px);
+  overflow: hidden;
+  margin-top: 44px;
 }
 </style>
