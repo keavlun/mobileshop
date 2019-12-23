@@ -1,10 +1,10 @@
 <template>
-  <div class="goods-item">
-    <img :src="goodslistitem.show.img" alt />
+  <div class="goods-item" @click="itemClick">
+    <img :src="goodslistitem.show.img" alt @load="imageLoad" />
     <div class="goods-des">
       <p>{{goodslistitem.title}}</p>
       <span class="price">{{goodslistitem.orgPrice}}</span>
-      <i class='stars'>&#xe622;</i>
+      <i class="stars">&#xe622;</i>
       <span>{{goodslistitem.cfav}}</span>
     </div>
   </div>
@@ -23,19 +23,28 @@ export default {
         return {};
       }
     }
+  },
+  methods: {
+    imageLoad() {
+      this.$bus.$emit("itemImageLoad");
+    },
+    itemClick() {
+      console.log('123');
+      this.$router.push('/detail/'+ this.goodslistitem.iid)
+    }
   }
 };
 </script>
 
 <style>
-.goods-item{
+.goods-item {
   text-align: center;
   width: 48%;
   /* height: 100%; */
   margin: 5px 0;
   /* position: relative; */
 }
-.goods-des{
+.goods-des {
   width: 100%;
 }
 /* .goods-des{
@@ -55,11 +64,11 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.price{
-  color: var(--color-high-text)
+.price {
+  color: var(--color-high-text);
 }
-.stars{
-  font-family: 'iconfont'; 
+.stars {
+  font-family: "iconfont";
   font-style: normal;
   display: inline-block;
   padding: 0 0 0 8px;

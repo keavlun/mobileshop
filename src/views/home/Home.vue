@@ -3,16 +3,25 @@
     <nav-bar class="home-navbar">
       <div slot="center">购物街</div>
     </nav-bar>
-    <scroll class="content" 
-            ref="scroll" 
-            :probe-type="3" 
-            @scroll="topShow" 
-            :pull-up-load="true" 
-            @pullingUp="loadMore">
-      <home-swiper :banners="banners" />
+    <tab-control
+      :titles="['流行','新款','精选']"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      class="tab-control"
+      v-show="isTabFixed"
+    />
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="topShow"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
+    >
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad" />
       <recommend-view :recommends="recommends" />
       <future-view />
-      <tab-control :titles="['流行','新款','精选']" class="tab-bar" @tabClick="tabClick" />
+      <tab-control :titles="['流行','新款','精选']" @tabClick="tabClick" ref="tabControl2" />
       <goods-list :goods="togglelist" />
     </scroll>
     <back-top @click.native="backClick" v-show="isShow"></back-top>
@@ -30,6 +39,7 @@ import Scroll from "../../components/common/scroll/Scroll";
 import BackTop from "../../components/common/backtop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "../../network/home";
+import { debounce } from "../../common/utils";
 
 export default {
   data() {
@@ -42,7 +52,9 @@ export default {
         sell: { page: 0, list: [] }
       },
       goodstype: "pop",
-      isShow: null
+      isShow: null,
+      tabOffsetTop: 0,
+      isTabFixed: false
     };
   },
   created() {
@@ -50,6 +62,12 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
+  },
+  mounted() {
+    const refresh = debounce(this.$refs.scroll.refresh, 50);
+    this.$bus.$on("itemImageLoad", () => {
+      refresh();
+    });
   },
   methods: {
     getHomeMultidata() {
@@ -64,7 +82,7 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
 
-        this.$refs.scroll.finishPullUp()
+        this.$refs.scroll.finishPullUp();
       });
     },
     tabClick(index) {
@@ -79,17 +97,22 @@ export default {
           this.goodstype = "sell";
           break;
       }
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index;
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0);
     },
     topShow(position) {
-      this.isShow = (-position.y) > 1000;
+      this.isShow = -position.y > 1000;
+      this.isTabFixed = -position.y > this.tabOffsetTop+44;
     },
-    loadMore(){
-      console.log('123123');
-      this.getHomeGoods(this.goodstype)
+    loadMore() {
+      this.getHomeGoods(this.goodstype);
     },
+    swiperImageLoad() {
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+    }
   },
   components: {
     NavBar,
@@ -111,26 +134,34 @@ export default {
 
 <style scoped>
 #home {
-  /* padding-top: 44px; */
   height: 100vh;
 }
 .home-navbar {
-  position: fixed;
+  position: relative;
   left: 0;
   right: 0;
   top: 0;
-  z-index: 9;
-  background-color: var(--color-tint);
+  z-index: 10;
+  background-color: var(--color-tint) ;
   color: #ffffff;
   font-size: 22px;
+  /* margin-bottom: 44px; */
 }
-.tab-bar {
-  position: sticky;
-  top: 44px;
-}
+
 .content {
   height: calc(100% - 93px);
   overflow: hidden;
-  margin-top: 44px;
+  
+}
+/* .fixed{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 44px;
+   } */
+.tab-control {
+  position: relative;
+  /* top: 44px; */
+  z-index: 10;
 }
 </style>

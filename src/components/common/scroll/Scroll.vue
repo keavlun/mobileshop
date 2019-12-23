@@ -30,24 +30,28 @@ export default {
       click: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad
-    })
+    });
 
     this.scroll.on("scroll", position => {
       this.$emit("scroll", position);
-    })
+    });
 
-    this.scroll.on('pullingUp', () => {
-      // console.log('123');
-      this.$emit('pullingUp')
-    })
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        this.$emit("pullingUp");
+      });
+    }
   },
 
   methods: {
     scrollTo(x, y, time = 500) {
       this.scroll.scrollTo(x, y, time);
     },
-    finishPullUp(){
+    finishPullUp() {
       this.scroll.finishPullUp();
+    },
+    refresh() {
+      this.scroll.refresh();
     }
   }
 };
